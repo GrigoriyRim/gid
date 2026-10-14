@@ -166,7 +166,8 @@ gastro-weekends/
 │   └── migrations/
 │       ├── 001_create_points.sql
 │       ├── 002_create_routes.sql
-│       └── 003_create_users.sql
+│       ├── 003_create_profiles.sql
+│       └── 004_create_saved_routes.sql
 ├── .env.local
 ├── .env.example
 ├── next.config.ts
@@ -212,7 +213,7 @@ gastro-weekends/
 | Поле | Тип | Описание |
 |------|-----|----------|
 | `id` | `uuid` (PK, default: gen_random_uuid()) | Уникальный идентификатор |
-| `user_id` | `uuid` (FK → users.id, nullable) | Автор (null = аноним) |
+| `user_id` | `uuid` (FK → auth.users(id), nullable) | Автор (null = аноним) |
 | `share_slug` | `text` (UNIQUE) | Короткий URL-слаг для шеринга |
 | `start_city` | `text` (NOT NULL) | Город отправления |
 | `duration_days` | `integer` (NOT NULL) | 1 или 2 |
@@ -251,19 +252,32 @@ gastro-weekends/
 
 ---
 
-### Таблица `users`
+### Таблица `profiles`
 
 | Поле | Тип | Описание |
 |------|-----|----------|
-| `id` | `uuid` (PK) | ID из Supabase Auth |
-| `email` | `text` (UNIQUE, NOT NULL) | Email |
+| `id` | `uuid` (PK, FK → auth.users(id) ON DELETE CASCADE) | ID из Supabase Auth |
 | `name` | `text` | Имя |
 | `avatar_url` | `text` | URL аватара |
-| `saved_route_ids` | `uuid[]` | Сохранённые маршруты |
 | `created_at` | `timestamptz` (default: now()) | Дата регистрации |
 | `last_login_at` | `timestamptz` | Последний вход |
 
-**Индексы:** `email` (UNIQUE)
+**Индексы:** нет дополнительных (PK по id)
+
+---
+
+### Таблица `saved_routes`
+
+| Поле | Тип | Описание |
+|------|-----|----------|
+| `id` | `uuid` (PK, default: gen_random_uuid()) | Уникальный идентификатор |
+| `user_id` | `uuid` (FK → auth.users(id) ON DELETE CASCADE, NOT NULL) | Пользователь |
+| `route_id` | `uuid` (FK → routes(id) ON DELETE CASCADE, NOT NULL) | Сохранённый маршрут |
+| `created_at` | `timestamptz` (default: now()) | Дата сохранения |
+
+**Ограничения:** `UNIQUE(user_id, route_id)` — один пользователь не может сохранить один маршрут дважды.
+
+**Индексы:** `user_id`, `route_id`
 
 ---
 
@@ -284,7 +298,7 @@ gastro-weekends/
 
 | Роль | Что должна сделать |
 |------|-------------------|
-| **Data Engineer** | Собрать базу из 50+ точек (фермы, сыроварни, винодельни, глэмпинги) в data/points.json. Обогащить координатами, описаниями, ценами. Написать скрипт импорта в Supabase. |
+| **Data Engineer** | Собрать базу из 50+ точек (фермы, сыроварни, винодельни, глэмпинги) в data/points.json. Обогатить координатами, описаниями, ценами. Написать скрипт импорта в Supabase. Обязательные поля для MVP: id, name, type, city, coordinates, description. Остальные — nullable, заполнять только если есть достоверные данные. |
 | **UI/UX Дизайнер** | Создать wireframes трёх экранов MVP. Определить дизайн-систему (цвета, типографика, компоненты). Подготовить UI-kit в Figma. |
 | **Frontend Developer** | Реализовать три экрана MVP на Next.js + Tailwind. Интегрировать Leaflet-карту. Настроить Zustand-стор. Подключить API. |
 | **Backend/AI Developer** | Реализовать API-роуты. Настроить промпт для ИИ-генерации маршрутов через OpenRouter. Интегрировать Supabase (auth, БД). Написать server actions. |
