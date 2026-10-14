@@ -120,11 +120,12 @@ box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15), 0 6px 6px rgba(0, 0, 0, 0.1);
 |----------|--------|---------|--------|
 | **Mobile** | 375px | 4 | 16px |
 | **Tablet** | 768px | 8 | 24px |
+| **Desktop-sm** | 1024px | 8 | 24px |
 | **Desktop** | 1280px | 12 | 32px |
 
 **Контейнер:**
 - Max-width: 1200px
-- Padding: 16px (mobile), 24px (tablet), 32px (desktop)
+- Padding: 16px (mobile), 24px (tablet / desktop-sm), 32px (desktop)
 
 ---
 
@@ -709,17 +710,14 @@ box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15), 0 6px 6px rgba(0, 0, 0, 0.1);
   --radius-lg: 12px;
   --radius-xl: 16px;
   --radius-pill: 9999px;
-  --radius-circle: 50%;
   
   /* Shadows */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.15), 0 6px 6px rgba(0, 0, 0, 0.1);
   
-  /* Breakpoints */
-  --breakpoint-mobile: 375px;
-  --breakpoint-tablet: 768px;
-  --breakpoint-desktop: 1280px;
+  /* Breakpoints (нельзя использовать в @media как CSS-переменные):
+     mobile: 375px, tablet: 768px, desktop-sm: 1024px, desktop: 1280px */
   
   /* Container */
   --container-max-width: 1200px;
