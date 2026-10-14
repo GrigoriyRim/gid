@@ -20,8 +20,12 @@
   
   --color-success: #4CAF50;
   --color-error: #E53935;
+  --color-error-bg: #FFF5F5;
   --color-warning: #FF9800;
   --color-info: #2196F3;
+  
+  --color-border: #D0D0D0;
+  --color-track: #D0D0D0;
   
   /* Point Types */
   --color-syrovarnya: #4A90E2;

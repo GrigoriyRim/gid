@@ -26,9 +26,10 @@
 
 ## ➡️ Дальше
 
-1. **Реализовать Backend/AI** — Backend/AI Developer реализует API-роуты и ИИ-генерацию маршрутов.
-2. **Собрать Экран 2** — Frontend реализует страницу маршрута с картой Leaflet и таймлайном.
-3. **Собрать Экран 3** — Frontend реализует страницу шеринга маршрута.
+1. **Supabase: создать проект и применить миграции** — DevOps создаёт Supabase-проект, применяет миграции (001–004), настраивает RLS.
+2. **Backend/AI: реализовать Edge Function generate-route** — Backend/AI Developer создаёт Edge Function `/functions/v1/generate-route` с интеграцией OpenRouter.
+3. **Frontend: Экран 2 (страница маршрута)** — Frontend реализует страницу маршрута с картой Leaflet и таймлайном.
+4. **Deployment: настроить Vercel + Supabase** — DevOps настраивает деплой статики на Vercel и подключение к Supabase Edge Functions.
 
 ---
 

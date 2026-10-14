@@ -22,7 +22,7 @@ export const DurationToggle: React.FC<DurationToggleProps> = ({
           className={`flex-1 h-12 px-4 rounded-[var(--radius-md)] border-2 transition-all duration-[var(--transition-fast)] font-medium ${
             value === 1
               ? 'bg-[var(--color-primary)] text-white border-[var(--color-primary)]'
-              : 'bg-[var(--color-surface)] text-[var(--color-text)] border-gray-300 hover:border-[var(--color-primary)]'
+              : 'bg-[var(--color-surface)] text-[var(--color-text)] border-[var(--color-border)] hover:border-[var(--color-primary)]'
           }`}
         >
           1 день
@@ -33,7 +33,7 @@ export const DurationToggle: React.FC<DurationToggleProps> = ({
           className={`flex-1 h-12 px-4 rounded-[var(--radius-md)] border-2 transition-all duration-[var(--transition-fast)] font-medium ${
             value === 2
               ? 'bg-[var(--color-primary)] text-white border-[var(--color-primary)]'
-              : 'bg-[var(--color-surface)] text-[var(--color-text)] border-gray-300 hover:border-[var(--color-primary)]'
+              : 'bg-[var(--color-surface)] text-[var(--color-text)] border-[var(--color-border)] hover:border-[var(--color-primary)]'
           }`}
         >
           2 дня с ночёвкой

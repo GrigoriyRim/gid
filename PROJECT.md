@@ -71,13 +71,14 @@
 
 | Слой | Технология | Обоснование |
 |------|-----------|-------------|
-| Фреймворк | Next.js 14+ (App Router) | SSR/SSG, server actions, API routes, экосистема |
+| Фреймворк | React 18 + Vite + TypeScript | Быстрая разработка, HMR, статический билд |
 | Язык | TypeScript | Типобезопасность, рефакторинг |
 | Стили | Tailwind CSS | Быстрая разработка, консистентность |
 | База данных | Supabase (PostgreSQL) | Auth, Realtime, REST API из коробки |
+| Бэкенд | Supabase Edge Functions (Deno) | API-ключи на сервере, 500k вызовов/мес бесплатно |
 | ИИ | OpenRouter API | Доступ к GPT-4, Claude, Mistral через единый API |
 | Карты | Leaflet + OpenStreetMap | Бесплатно, без API-ключей, достаточно для MVP |
-| Хостинг | Vercel | Нативная поддержка Next.js, CI/CD, edge |
+| Хостинг | Vercel (статика) + Supabase Edge Functions | Vercel для фронта, Supabase для бэкенда |
 | Валидация | Zod | Схема-валидация для форм и API |
 | Состояние | Zustand | Лёгкий стор для клиента |
 
@@ -91,6 +92,7 @@ gastro-weekends/
 ├── ROLES.md
 ├── DECISIONS.md
 ├── PROGRESS.md
+├── DESIGN.md
 ├── data/
 │   └── points.json
 ├── public/
@@ -99,28 +101,14 @@ gastro-weekends/
 │   │   └── icons/
 │   └── favicon.ico
 ├── src/
-│   ├── app/
-│   │   ├── layout.tsx
-│   │   ├── page.tsx                    # Экран 1: Форма ввода
-│   │   ├── route/
-│   │   │   └── [id]/
-│   │   │       ├── page.tsx            # Экран 2: Страница маршрута
-│   │   │       └── share/
-│   │   │           └── page.tsx        # Экран 3: Шеринг
-│   │   ├── api/
-│   │   │   ├── generate/
-│   │   │   │   └── route.ts            # POST /api/generate
-│   │   │   ├── routes/
-│   │   │   │   ├── route.ts            # GET /api/routes (список)
-│   │   │   │   └── [id]/
-│   │   │   │       └── route.ts        # GET /api/routes/[id]
-│   │   │   └── share/
-│   │   │       └── route.ts            # POST /api/share
-│   │   └── globals.css
+│   ├── App.tsx                         # Главная страница (Экран 1)
+│   ├── index.css                       # Глобальные стили + CSS-токены
+│   ├── main.tsx                        # Точка входа
 │   ├── components/
 │   │   ├── ui/
 │   │   │   ├── Button.tsx
 │   │   │   ├── Input.tsx
+│   │   │   ├── Select.tsx
 │   │   │   ├── Slider.tsx
 │   │   │   ├── Checkbox.tsx
 │   │   │   ├── Card.tsx
@@ -143,7 +131,6 @@ gastro-weekends/
 │   ├── lib/
 │   │   ├── supabase/
 │   │   │   ├── client.ts
-│   │   │   ├── server.ts
 │   │   │   └── types.ts
 │   │   ├── ai/
 │   │   │   ├── openrouter.ts
@@ -151,6 +138,8 @@ gastro-weekends/
 │   │   │   └── types.ts
 │   │   ├── maps/
 │   │   │   └── utils.ts
+│   │   ├── validation/
+│   │   │   └── trip.ts
 │   │   └── utils.ts
 │   ├── hooks/
 │   │   ├── useGenerateRoute.ts
@@ -163,14 +152,21 @@ gastro-weekends/
 │       ├── point.ts
 │       └── route.ts
 ├── supabase/
-│   └── migrations/
-│       ├── 001_create_points.sql
-│       ├── 002_create_routes.sql
-│       ├── 003_create_profiles.sql
-│       └── 004_create_saved_routes.sql
+│   ├── migrations/
+│   │   ├── 001_create_points.sql
+│   │   ├── 002_create_routes.sql
+│   │   ├── 003_create_profiles.sql
+│   │   └── 004_create_saved_routes.sql
+│   └── functions/
+│       ├── generate-route/
+│       │   └── index.ts                # POST /functions/v1/generate-route
+│       ├── get-routes/
+│       │   └── index.ts                # GET /functions/v1/get-routes
+│       └── share-route/
+│           └── index.ts                # POST /functions/v1/share-route
 ├── .env.local
 ├── .env.example
-├── next.config.ts
+├── vite.config.ts
 ├── tailwind.config.ts
 ├── tsconfig.json
 ├── package.json
@@ -281,16 +277,16 @@ gastro-weekends/
 
 ---
 
-## API-роуты
+## API-роуты (Supabase Edge Functions)
 
 | Метод | Путь | Описание |
 |-------|------|----------|
-| `POST` | `/api/generate` | Генерация маршрута через ИИ. Body: `{ startCity, budget, duration, interests }`. Response: `{ routeId, data }` |
-| `GET` | `/api/routes` | Список маршрутов пользователя (требует auth) |
-| `GET` | `/api/routes/[id]` | Получить маршрут по ID |
-| `POST` | `/api/share` | Создать публичную ссылку. Body: `{ routeId }`. Response: `{ shareUrl }` |
-| `GET` | `/api/share/[slug]` | Получить маршрут по share-слагу |
-| `DELETE` | `/api/routes/[id]` | Удалить маршрут (требует auth) |
+| `POST` | `/functions/v1/generate-route` | Генерация маршрута через ИИ. Body: `{ startCity, budget, duration, interests }`. Response: `{ routeId, data }` |
+| `GET` | `/functions/v1/get-routes` | Список маршрутов пользователя (требует auth) |
+| `GET` | `/functions/v1/get-route?id=...` | Получить маршрут по ID |
+| `POST` | `/functions/v1/share-route` | Создать публичную ссылку. Body: `{ routeId }`. Response: `{ shareUrl }` |
+| `GET` | `/functions/v1/get-shared-route?slug=...` | Получить маршрут по share-слагу |
+| `DELETE` | `/functions/v1/delete-route` | Удалить маршрут (требует auth). Body: `{ routeId }` |
 
 ---
 

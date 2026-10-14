@@ -38,9 +38,9 @@ export const Slider: React.FC<SliderProps> = ({
           step={step}
           value={value}
           onChange={(e) => onChange(Number(e.target.value))}
-          className="w-full h-1 bg-gray-300 rounded-full appearance-none cursor-pointer slider-thumb"
+          className="w-full h-1 rounded-full appearance-none cursor-pointer slider-thumb"
           style={{
-            background: `linear-gradient(to right, var(--color-primary) 0%, var(--color-primary) ${percentage}%, #D0D0D0 ${percentage}%, #D0D0D0 100%)`,
+            background: `linear-gradient(to right, var(--color-primary) 0%, var(--color-primary) ${percentage}%, var(--color-track) ${percentage}%, var(--color-track) 100%)`,
           }}
         />
         <div className="flex justify-between mt-2 text-xs text-[var(--color-muted)]">

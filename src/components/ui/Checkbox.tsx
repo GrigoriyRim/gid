@@ -25,7 +25,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
         className={`relative w-5 h-5 rounded border-2 transition-all duration-[var(--transition-fast)] ${
           checked
             ? 'bg-[var(--color-primary)] border-[var(--color-primary)]'
-            : 'bg-[var(--color-surface)] border-gray-300 group-hover:border-[var(--color-primary)]'
+            : 'bg-[var(--color-surface)] border-[var(--color-border)] group-hover:border-[var(--color-primary)]'
         }`}
       >
         {checked && (
